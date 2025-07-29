@@ -1,0 +1,69 @@
+# Laravel / PHP
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+.env.*
+.phpunit.result.cache
+Homestead.yaml
+Homestead.json
+/.idea
+/.vscode
+/.phpunit.result.cache
+
+# Laravel logovi i keš
+/storage/logs
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+/storage/framework/testing
+/storage/oauth-private.key
+/storage/oauth-public.key
+
+# Laravel Nova / Filament cache (ako bude potrebno)
+/nova-components
+.phpstorm.meta.php
+
+# MacOS / MAMP
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Firebase credentials (OBAVEZNO!)
+firebase_credentials.json
+
+# Composer / NPM
+composer.lock
+yarn.lock
+package-lock.json
+npm-debug.log
+yarn-error.log
+
+# Laravel Mix / vite / build
+/public/hot
+/public/mix-manifest.json
+/public/build
+/build
+/resources/js/.vite
+
+# IDE / Editor config
+/.env.local
+/.env.backup
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Node
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Tests
+coverage/
+.phpunit.result.cache
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
