@@ -143,8 +143,8 @@ class WorkOrderResource extends Resource
                                 'metraza' => [
                                     // Dužina, visina, nabor, broj delova u istom redu
                                     Grid::make(4)->schema([
-                                        TextInput::make('duzina')->numeric()->label('Dužina')->default(1)->required(),
-                                        TextInput::make('visina')->numeric()->label('Visina')->required(),
+                                        TextInput::make('duzina')->numeric()->label('Dužina u m')->default(1)->required(),
+                                        TextInput::make('visina')->numeric()->label('Visina u cm')->required(),
                                         TextInput::make('nabor')->label('Nabor')->required(),
                                         TextInput::make('broj_delova')->numeric()->label('Broj delova')->required(),
                                     ]),
@@ -181,7 +181,6 @@ class WorkOrderResource extends Resource
                                     TextInput::make('sirina')
                                         ->numeric()
                                         ->label('Širina (m)')
-                                        ->default(1)
                                         ->required(),
                                     TextInput::make('visina')
                                         ->numeric()
@@ -409,7 +408,7 @@ class WorkOrderResource extends Resource
                 TextColumn::make('total_price')->label('Ukupna cena')->money('RSD'),
                 TextColumn::make('advance_payment')->label('Plaćeno do sad')->money('RSD'),
                 TextColumn::make('cena_montaze')->label('Montaža')->money('RSD'),
-                TextColumn::make('note')->label('Napomena')->searchable(),
+                TextColumn::make('note')->label('Napomena')->limit(30)->searchable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
