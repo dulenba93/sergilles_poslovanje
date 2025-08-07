@@ -30,4 +30,15 @@ class WorkOrderPosition extends Model
         {
             return $this->belongsTo(\App\Models\PozicijaGarnisna::class, 'pozicija_id')->where('pozicija_type', 'garnisna');
         }
+        public function roloZebra()
+        {
+            return $this->belongsTo(\App\Models\PozicijaRoloZebra::class, 'pozicija_id')
+                ->where('pozicija_type', 'rolo_zebra');
+        }
+
+        public function plise()
+        {
+            return $this->belongsTo(\App\Models\PozicijaPlise::class, 'pozicija_id')
+                ->where('pozicija_type', 'plise');
+        }
 }
