@@ -20,16 +20,16 @@ class PozicijaRoloZebra extends Model
     protected $table = 'pozicija_rolo_zebra';
 
     protected $fillable = [
-        'product_id',        // naziv platna (product_id)
-        'sirina_mehanizma',  // širina mehanizma u metrima
-        'visina_platna',     // visina platna u metrima
-        'sirina_platna',     // širina platna u metrima (može biti null)
-        'mehanizam',         // mini ili standard
-        'broj_kom',          // broj komada
-        'potez',             // levo ili desno
-        'kacenje',           // plafon, zid ili pvc_kacenje
-        'maska_boja',        // opis maske/boje
-        'napomena',          // napomena (može biti null)
+        'product_id',   // id proizvoda (naziv platna)
+        'sirina',       // širina u metrima
+        'visina',       // visina u metrima
+        'sirina_type',  // da li se širina odnosi na mehanizam ili platno
+        'mehanizam',    // mini ili standard
+        'broj_kom',     // broj komada
+        'potez',        // levo ili desno
+        'kacenje',      // plafon, zid ili pvc kačenje
+        'maska_boja',   // maska / boja
+        'napomena',     // napomena (nullable)
     ];
 
     public function product()

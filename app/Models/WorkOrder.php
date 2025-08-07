@@ -45,33 +45,56 @@ class WorkOrder extends Model
             if (request()->has('positions')) {
                 foreach (request()->get('positions') as $positionData) {
                     $type = $positionData['position_type'];
-
                     if ($type === 'metraza') {
                         $pozicija = PozicijaMetraza::create([
-                            'duzina' => $positionData['duzina'] ?? 0,
-                            'visina' => $positionData['visina'] ?? null,
-                            'nabor' => $positionData['nabor'] ?? null,
+                            'duzina'      => $positionData['duzina'] ?? 0,
+                            'visina'      => $positionData['visina'] ?? null,
+                            'nabor'       => $positionData['nabor'] ?? null,
                             'broj_delova' => $positionData['broj_delova'] ?? null,
-                            'product_id' => $positionData['product_id'] ?? null,
-                            'cena' => $positionData['cena'] ?? 0,
+                            'product_id'  => $positionData['product_id'] ?? null,
+                            'cena'        => $positionData['cena'] ?? 0,
                         ]);
                     } elseif ($type === 'garnisna') {
                         $pozicija = PozicijaGarnisna::create([
-                            'duzina' => $positionData['duzina'] ?? 0,
+                            'duzina'     => $positionData['duzina'] ?? 0,
                             'product_id' => $positionData['product_id'] ?? null,
-                            'cena' => $positionData['cena'] ?? 0,
+                            'cena'       => $positionData['cena'] ?? 0,
+                        ]);
+                    } elseif ($type === 'rolo_zebra') {
+                        $pozicija = PozicijaRoloZebra::create([
+                            'product_id'  => $positionData['product_id'] ?? null,
+                            'sirina'      => $positionData['sirina'] ?? 0,
+                            'visina'      => $positionData['visina'] ?? 0,
+                            'sirina_type' => $positionData['sirina_type'] ?? 'mehanizam',
+                            'mehanizam'   => $positionData['mehanizam'] ?? 'standard',
+                            'broj_kom'    => $positionData['br_kom'] ?? 1,
+                            'potez'       => $positionData['potez'] ?? 'levo',
+                            'kacenje'     => $positionData['kacenje'] ?? 'plafon',
+                            'maska_boja'  => $positionData['maska_boja'] ?? null,
+                            'napomena'    => $positionData['napomena'] ?? null,
+                        ]);
+                    } elseif ($type === 'plise') {
+                        $pozicija = PozicijaPlise::create([
+                            'product_id'  => $positionData['product_id'] ?? null,
+                            'sirina'      => $positionData['sirina'] ?? 0,
+                            'visina'      => $positionData['visina'] ?? 0,
+                            'mehanizam'   => $positionData['mehanizam'] ?? 'standard',
+                            'broj_kom'    => $positionData['br_kom'] ?? 1,
+                            'potez'       => $positionData['potez'] ?? 'levo',
+                            'maska_boja'  => $positionData['maska_boja'] ?? null,
+                            'napomena'    => $positionData['napomena'] ?? null,
                         ]);
                     } else {
                         continue;
                     }
 
-                    WorkOrderPosition::create([
-                        'work_order_id' => $order->id,
-                        'pozicija_type' => $type,
-                        'pozicija_id' => $pozicija->id,
-                        'naziv' => $positionData['name'] ?? null,
-                        'napomena' => $positionData['napomena'] ?? null,
-                    ]);
+            WorkOrderPosition::create([
+                'work_order_id' => $order->id,
+                'pozicija_type' => $type,
+                'pozicija_id'   => $pozicija->id,
+                'naziv'         => $positionData['name'] ?? null,
+                'napomena'      => $positionData['napomena'] ?? null,
+]);
                 }
             }
         });

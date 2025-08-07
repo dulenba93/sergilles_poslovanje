@@ -104,10 +104,12 @@ class WorkOrderResource extends Resource
                     ->schema([
                         Select::make('position_type')
                             ->label('Tip pozicije')
-                            ->options([
-                                'metraza'  => 'Metraža',
-                                'garnisna' => 'Garnišna',
-                            ])
+                              ->options([
+                                    'metraza'    => 'Metraža',
+                                    'garnisna'   => 'Garnišna',
+                                    'rolo_zebra' => 'Rolo/Zebra',
+                                    'plise'      => 'Plise',
+                                ])
                             ->reactive()
                             ->required(),
 
@@ -173,6 +175,111 @@ class WorkOrderResource extends Resource
                                         TextInput::make('cena')->numeric()->label('Cena')->default(0)->required(),
                                     ]),
                                 ],
+                               'rolo_zebra' => [
+                                // sirina i visina (m), plus izbor da li se sirina odnosi na mehanizam ili platno
+                                Grid::make(3)->schema([
+                                    TextInput::make('sirina')
+                                        ->numeric()
+                                        ->label('Širina (m)')
+                                        ->default(1)
+                                        ->required(),
+                                    TextInput::make('visina')
+                                        ->numeric()
+                                        ->label('Visina (m)')
+                                        ->required(),
+                                    Select::make('sirina_type')
+                                        ->label('Širina se odnosi na')
+                                        ->options([
+                                            'mehanizam' => 'Mehanizam',
+                                            'platno'    => 'Platno',
+                                        ])
+                                        ->default('mehanizam')
+                                        ->required(),
+                                ]),
+                                // odabir mehanizma, način kačenja i pravac potezanja
+                                Grid::make(3)->schema([
+                                    Select::make('mehanizam')
+                                        ->label('Mehanizam')
+                                        ->options(['mini' => 'Mini', 'standard' => 'Standard'])
+                                        ->default('standard')
+                                        ->required(),
+                                    Select::make('kacenje')
+                                        ->label('Kačenje')
+                                        ->options([
+                                            'plafon'       => 'Plafon',
+                                            'zid'          => 'Zid',
+                                            'pvc_kacenje' => 'PVC kačenje',
+                                        ])
+                                        ->default('plafon')
+                                        ->required(),
+                                    Select::make('potez')
+                                        ->label('Potez')
+                                        ->options(['levo' => 'Levo', 'desno' => 'Desno'])
+                                        ->default('levo')
+                                        ->required(),
+                                ]),
+                                // cena, broj komada, maska / boja
+                                Grid::make(3)->schema([
+                                    TextInput::make('cena')
+                                        ->numeric()
+                                        ->label('Cena')
+                                        ->default(0)
+                                        ->required(),
+                                    TextInput::make('br_kom')
+                                        ->numeric()
+                                        ->label('Broj komada')
+                                        ->default(1)
+                                        ->minValue(1)
+                                        ->required(),
+                                    TextInput::make('maska_boja')
+                                        ->label('Maska / boja')
+                                        ->nullable(),
+                                ]),
+                            ],
+                               'plise' => [
+                                // sirina i visina u centimetrima
+                                Grid::make(2)->schema([
+                                    TextInput::make('sirina')
+                                        ->numeric()
+                                        ->label('Širina (cm)')
+                                        ->default(1)
+                                        ->required(),
+                                    TextInput::make('visina')
+                                        ->numeric()
+                                        ->label('Visina (cm)')
+                                        ->required(),
+                                ]),
+                                // mehanizam i potez
+                                Grid::make(2)->schema([
+                                    Select::make('mehanizam')
+                                        ->label('Mehanizam')
+                                        ->options(['mini' => 'Mini', 'standard' => 'Standard'])
+                                        ->default('standard')
+                                        ->required(),
+                                    Select::make('potez')
+                                        ->label('Potez')
+                                        ->options(['levo' => 'Levo', 'desno' => 'Desno'])
+                                        ->default('levo')
+                                        ->required(),
+                                ]),
+                                // cena, broj komada, maska / boja
+                                Grid::make(3)->schema([
+                                    TextInput::make('cena')
+                                        ->numeric()
+                                        ->label('Cena')
+                                        ->default(0)
+                                        ->required(),
+                                    TextInput::make('br_kom')
+                                        ->numeric()
+                                        ->label('Broj komada')
+                                        ->default(1)
+                                        ->minValue(1)
+                                        ->required(),
+                                    TextInput::make('maska_boja')
+                                        ->label('Maska / boja')
+                                        ->nullable(),
+                                ]),
+                            ],
                                 default => [],
                             }),
                     ])
@@ -183,86 +290,111 @@ class WorkOrderResource extends Resource
                         $cenaMontaze = (float) ($get('cena_montaze') ?? 0);
                         $total = $cenaMontaze;
 
-                        foreach ($positions as $item) {
-                            $duzina = isset($item['duzina']) ? (float) $item['duzina'] : 1;
-                            $cena = isset($item['cena']) ? (float) $item['cena'] : 0;
-                            $br_kom = isset($item['br_kom']) ? (int) $item['br_kom'] : 1;
-                            $total += $duzina * $cena * $br_kom;
+                      foreach ($positions as $item) {
+                            $cena   = isset($item['cena']) ? (float) $item['cena'] : 0;
+                            $br_kom = isset($item['br_kom']) ? (float) $item['br_kom'] : 1;
+                            $type   = $item['position_type'] ?? null;
+
+                            if (in_array($type, ['metraza', 'garnisna'])) {
+                                $duzina = isset($item['duzina']) ? (float) $item['duzina'] : 1;
+                                $total += $duzina * $cena * $br_kom;
+                            } elseif ($type === 'plise') {
+                                // širina i visina su u centimetrima → preračun u m²
+                                $sirina   = isset($item['sirina']) ? (float) $item['sirina'] : 0;
+                                $visina   = isset($item['visina']) ? (float) $item['visina'] : 0;
+                                $povrsina = ($sirina * $visina) / 10000; // cm² → m²
+                                if ($povrsina < 1) {
+                                    $povrsina = 1;
+                                }
+                                $total += $povrsina * $cena * $br_kom;
+                            } elseif ($type === 'rolo_zebra') {
+                                // širina i visina u metrima, površina u m²
+                                $sirina   = isset($item['sirina']) ? (float) $item['sirina'] : 0;
+                                $visina   = isset($item['visina']) ? (float) $item['visina'] : 0;
+                                $povrsina = $sirina * $visina;
+                                if ($povrsina < 1) {
+                                    $povrsina = 1;
+                                }
+                                $total += $povrsina * $cena * $br_kom;
+                            } else {
+                                // fallback: cena po komadu
+                                $total += $cena * $br_kom;
+                            }
                         }
 
                         $set('total_price', $total);
                     })
-    ->createItemButtonLabel('Dodaj poziciju'),
+                        ->createItemButtonLabel('Dodaj poziciju'),
 
-   
-   
-                Textarea::make('note')
-                ->label('Napomena')
-                ->rows(2)
-                ->nullable(),
+                    
+                    
+                                    Textarea::make('note')
+                                    ->label('Napomena')
+                                    ->rows(2)
+                                    ->nullable(),
 
-            DateTimePicker::make('scheduled_at')
-                ->label('Zakazano za'),
+                                DateTimePicker::make('scheduled_at')
+                                    ->label('Zakazano za'),
 
-            TextInput::make('cena_montaze')
-                ->label('Cena montaže')
-                ->numeric()
-                ->default(0)
-                ->live(),
+                                TextInput::make('cena_montaze')
+                                    ->label('Cena montaže')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->live(),
 
-            TextInput::make('advance_payment')
-                ->label('Avans/Placeno')
-                ->numeric()
-                ->default(0)
-                ->live(),
+                                TextInput::make('advance_payment')
+                                    ->label('Avans/Placeno')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->live(),
 
-            TextInput::make('total_price')
-                ->label('Ukupna cena')
-                ->numeric()
-                ->readOnly(),
-        ]);
-    }
+                                TextInput::make('total_price')
+                                    ->label('Ukupna cena')
+                                    ->numeric()
+                                    ->readOnly(),
+                            ]);
+                        }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('code')
-                    ->label('Code')
-                    ->badge()
-                    ->color(fn ($record) => match ($record->status) {
-                        'new' => 'success',
-                        'in_progress' => 'warning',
-                        'done' => 'blue-600',
-                        'cancelled' => 'gray',
-                        default => 'secondary',
-                    })
-                    ->searchable(),
+                        public static function table(Table $table): Table
+                        {
+                            return $table
+                                ->columns([
+                                    TextColumn::make('code')
+                                        ->label('Code')
+                                        ->badge()
+                                        ->color(fn ($record) => match ($record->status) {
+                                            'new' => 'success',
+                                            'in_progress' => 'warning',
+                                            'done' => 'blue-600',
+                                            'cancelled' => 'gray',
+                                            default => 'secondary',
+                                        })
+                                        ->searchable(),
 
-                SelectColumn::make('status')
-                    ->label('Status')
-                    ->options([
-                        'new' => 'Novi',
-                        'in_progress' => 'U toku',
-                        'done' => 'Završeno',
-                        'cancelled' => 'Otkazano',
-                    ])
-                    ->sortable()
-                    ->searchable(),
+                                    SelectColumn::make('status')
+                                        ->label('Status')
+                                        ->options([
+                                            'new' => 'Novi',
+                                            'in_progress' => 'U toku',
+                                            'done' => 'Završeno',
+                                            'cancelled' => 'Otkazano',
+                                        ])
+                                        ->sortable()
+                                        ->searchable(),
 
-                TextColumn::make('customer_name')->label('Naziv')->searchable(),
-                TextColumn::make('phone')->label('Telefon'),
+                                    TextColumn::make('customer_name')->label('Naziv')->searchable(),
+                                    TextColumn::make('phone')->label('Telefon'),
 
-                TextColumn::make('scheduled_at')
-                    ->label('Zakazano')
-                    ->dateTime()
-                    ->color(fn ($record) => match (true) {
-                        \Carbon\Carbon::parse($record->scheduled_at)->diffInDays(now(), false) > -1 => 'danger',
-                        \Carbon\Carbon::parse($record->scheduled_at)->diffInDays(now(), false) >= -3 &&
-                        \Carbon\Carbon::parse($record->scheduled_at)->diffInDays(now(), false) <= -1 => 'warning',
-                        \Carbon\Carbon::parse($record->scheduled_at)->diffInDays(now(), false) < -3 => 'success',
-                        default => null,
-                    }),
+                                    TextColumn::make('scheduled_at')
+                                        ->label('Zakazano')
+                                        ->dateTime()
+                                        ->color(fn ($record) => match (true) {
+                                            \Carbon\Carbon::parse($record->scheduled_at)->diffInDays(now(), false) > -1 => 'danger',
+                                            \Carbon\Carbon::parse($record->scheduled_at)->diffInDays(now(), false) >= -3 &&
+                                            \Carbon\Carbon::parse($record->scheduled_at)->diffInDays(now(), false) <= -1 => 'warning',
+                                            \Carbon\Carbon::parse($record->scheduled_at)->diffInDays(now(), false) < -3 => 'success',
+                                            default => null,
+                                        }),
 
                 TextColumn::make('tip_placanja')->label('Tip Plaćanja'),
 
