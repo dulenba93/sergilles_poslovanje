@@ -16,7 +16,9 @@ class PozicijaGarnisna extends Model
         'product_id',
         'duzina',
         'cena',
-        'name', // ako si dodavao ovo polje prilikom kreiranja pozicije u CreateWorkOrder
+        'name',
+        'br_kom',
+        'model',
     ];
 
     public function product()

@@ -22,71 +22,58 @@ class EditWorkOrder extends EditRecord
         return $data;
     }
 
-protected function handleRecordUpdate(Model $record, array $data): Model
-{
-    // Update the work order itself
-    $record->update($data);
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        // Update main work order
+        $record->update($data);
 
-    $positions = request()->input('data.positions', []);
+        // Handle update of positions
+        $positions = request()->input('data.positions', []);
+        foreach ($positions as $positionData) {
+            $type = $positionData['position_type'] ?? null;
+            $pozicijaId = $positionData['pozicija_id'] ?? null;
 
-    foreach ($positions as $positionData) {
-        $type = $positionData['position_type'] ?? null;
-        $pozicijaId = $positionData['pozicija_id'] ?? null;
+            if (! $type || ! $pozicijaId) {
+                continue;
+            }
 
-        if (! $type) {
-            continue;
+            if ($type === 'metraza') {
+                $pozicija = PozicijaMetraza::find($pozicijaId);
+                if ($pozicija) {
+                    $pozicija->update([
+                        'duzina' => $positionData['duzina'] ?? 0,
+                        'visina' => $positionData['visina'] ?? null,
+                        'nabor' => $positionData['nabor'] ?? null,
+                        'broj_delova' => $positionData['broj_delova'] ?? null,
+                        'product_id' => $positionData['product_id'] ?? null,
+                        'cena' => $positionData['cena'] ?? 0,
+                        'name' => $positionData['name'] ?? null,
+                    ]);
+                }
+            } elseif ($type === 'garnisna') {
+                $pozicija = PozicijaGarnisna::find($pozicijaId);
+                if ($pozicija) {
+                    $pozicija->update([
+                        'duzina' => $positionData['duzina'] ?? 0,
+                        'product_id' => $positionData['product_id'] ?? null,
+                        'cena' => $positionData['cena'] ?? 0,
+                        'name' => $positionData['name'] ?? null,
+                    ]);
+                }
+            }
+
+            // Update additional info in pivot (if editable)
+            WorkOrderPosition::where('work_order_id', $record->id)
+                ->where('pozicija_type', $type)
+                ->where('pozicija_id', $pozicijaId)
+                ->update([
+                    'naziv' => $positionData['name'] ?? null,
+                    'napomena' => $positionData['napomena'] ?? null,
+                ]);
         }
 
-        // --- 1. Upsert PozicijaMetraza ili PozicijaGarnisna ---
-        if ($type === 'metraza') {
-            $pozicija = $pozicijaId
-                ? \App\Models\PozicijaMetraza::find($pozicijaId)
-                : new \App\Models\PozicijaMetraza();
-
-            $pozicija->fill([
-                'duzina' => $positionData['duzina'] ?? 0,
-                'visina' => $positionData['visina'] ?? null,
-                'nabor' => $positionData['nabor'] ?? null,
-                'broj_delova' => $positionData['broj_delova'] ?? null,
-                'product_id' => $positionData['product_id'] ?? null,
-                'cena' => $positionData['cena'] ?? 0,
-                'name' => $positionData['name'] ?? null,
-            ]);
-            $pozicija->save();
-        } elseif ($type === 'garnisna') {
-            $pozicija = $pozicijaId
-                ? \App\Models\PozicijaGarnisna::find($pozicijaId)
-                : new \App\Models\PozicijaGarnisna();
-
-            $pozicija->fill([
-                'duzina' => $positionData['duzina'] ?? 0,
-                'product_id' => $positionData['product_id'] ?? null,
-                'cena' => $positionData['cena'] ?? 0,
-                'name' => $positionData['name'] ?? null,
-            ]);
-            $pozicija->save();
-        } else {
-            continue; // skip unsupported types
-        }
-
-        // --- 2. Veza sa WorkOrderPosition pivot tabelom ---
-        WorkOrderPosition::updateOrCreate(
-            [
-                'work_order_id' => $record->id,
-                'pozicija_type' => $type,
-                'pozicija_id' => $pozicija->id,
-            ],
-            [
-                'naziv' => $positionData['name'] ?? null,
-                'napomena' => $positionData['napomena'] ?? null,
-            ]
-        );
+        return $record;
     }
-
-    return $record;
-}
-
-
 
     protected function mutateFormDataBeforeFill(array $data): array
     {

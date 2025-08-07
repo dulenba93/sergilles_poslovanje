@@ -26,6 +26,11 @@ class ProductResource extends Resource
                 ->label('Naziv')
                 ->required(),
 
+            Forms\Components\Select::make('vendor_id')
+                ->relationship('vendor', 'name')
+                ->label('Dobavljač')
+                ->required(),
+
             Forms\Components\Textarea::make('description')
                 ->label('Opis'),
 
@@ -69,6 +74,10 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('sale_price')
                     ->label('Cena')
                     ->sortable(),
+                 Tables\Columns\TextColumn::make('vendor.name')
+                    ->label('Dobavljac')
+                    ->sortable(),
+
 
                Tables\Columns\TextColumn::make('category.name')
                 ->label('Kategorija')

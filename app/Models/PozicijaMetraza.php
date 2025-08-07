@@ -18,7 +18,9 @@ class PozicijaMetraza extends Model
         'nabor',
         'broj_delova',
         'cena',
-        'name', // dodaj ako koristiš name u kreiranju pozicija
+        'name',
+        'br_kom',
+        'model',
     ];
 
     public function product()

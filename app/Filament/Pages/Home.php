@@ -10,7 +10,7 @@ class Home extends Page
 
     protected static string $view = 'filament.pages.home';
 
-    protected static ?string $title = 'Dashboard';
+    protected static ?string $title = 'PREGLED';
 
     protected static ?string $navigationGroup = null;
 
