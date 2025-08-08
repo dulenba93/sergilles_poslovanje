@@ -17,16 +17,19 @@ class PozicijaPlise extends Model
 
     protected $table = 'pozicija_plise';
 
-    protected $fillable = [
-        'product_id',  // naziv platna (product_id)
-        'sirina',      // širina u centimetrima
-        'visina',      // visina u centimetrima
-        'mehanizam',   // mini ili standard
-        'broj_kom',    // broj komada
-        'potez',       // levo ili desno
-        'maska_boja',  // boja/opis maske
-        'napomena',    // napomena (može biti null)
-    ];
+            protected $fillable = [
+                'product_id',
+                'name',   // naziv pozicije
+                'model',  // ručni naziv modela
+                'cena',   // cena
+                'sirina',
+                'visina',
+                'mehanizam',
+                'broj_kom',
+                'potez',
+                'maska_boja',
+                'napomena',
+            ];
 
     public function product()
     {

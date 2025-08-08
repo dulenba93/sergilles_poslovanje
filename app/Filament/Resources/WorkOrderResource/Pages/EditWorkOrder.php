@@ -41,12 +41,13 @@ class EditWorkOrder extends EditRecord
             $formPositions[] = array_merge(
                 $pozicija->toArray(),
                 [
-                    'pozicija_id' => $pozicija->id,
+                    'pozicija_id'   => $pozicija->id,
                     'position_type' => $position->pozicija_type,
-                    'name' => $pozicija->name ?? null,
-                    'model' => $pozicija->model ?? null,
-                    'cena' => $pozicija->cena ?? null,
-                    'napomena' => $position->napomena ?? null,
+                    'name'          => $pozicija->name ?? null,
+                    'model'         => $pozicija->model ?? null,
+                    'cena'          => $pozicija->cena ?? null,
+                    'br_kom'        => $pozicija->broj_kom ?? 1, // forma koristi br_kom
+                    'napomena'      => $position->napomena ?? null,
                 ]
             );
         }
@@ -60,6 +61,7 @@ class EditWorkOrder extends EditRecord
     {
         $record->update($data);
 
+        // brišemo postojeće pivote i rekonstrušemo ih iz forme
         WorkOrderPosition::where('work_order_id', $record->id)->delete();
 
         $positions = $data['positions'] ?? [];
@@ -72,53 +74,58 @@ class EditWorkOrder extends EditRecord
                 continue;
             }
 
+            // KREIRANJE NOVE POZICIJE
             if (! $pozicijaId) {
                 if ($type === 'metraza') {
                     $pozicija = PozicijaMetraza::create([
-                        'duzina' => $positionData['duzina'] ?? 0,
-                        'visina' => $positionData['visina'] ?? null,
-                        'nabor' => $positionData['nabor'] ?? null,
-                        'broj_delova' => $positionData['broj_delova'] ?? null,
-                        'product_id' => $positionData['product_id'] ?? null,
-                        'cena' => $positionData['cena'] ?? 0,
-                        'name' => $positionData['name'] ?? null,
+                        'duzina'       => $positionData['duzina'] ?? 0,
+                        'visina'       => $positionData['visina'] ?? null,
+                        'nabor'        => $positionData['nabor'] ?? null,
+                        'broj_delova'  => $positionData['broj_delova'] ?? null,
+                        'product_id'   => $positionData['product_id'] ?? null,
+                        'cena'         => $positionData['cena'] ?? 0,
+                        'model'       => $positionData['model'] ?? null,
+                        'br_kom'    => $positionData['br_kom'] ?? 1, // mapiranje iz forme
+                        'name'         => $positionData['name'] ?? null,
                     ]);
                 } elseif ($type === 'garnisna') {
                     $pozicija = PozicijaGarnisna::create([
-                        'duzina' => $positionData['duzina'] ?? 0,
+                        'duzina'     => $positionData['duzina'] ?? 0,
                         'product_id' => $positionData['product_id'] ?? null,
-                        'cena' => $positionData['cena'] ?? 0,
-                        'name' => $positionData['name'] ?? null,
+                        'cena'       => $positionData['cena'] ?? 0,
+                        'model'       => $positionData['model'] ?? null,
+                        'br_kom'    => $positionData['br_kom'] ?? 1, // mapiranje iz forme
+                        'name'       => $positionData['name'] ?? null,
                     ]);
                 } elseif ($type === 'rolo_zebra') {
                     $pozicija = PozicijaRoloZebra::create([
-                        'product_id' => $positionData['product_id'] ?? null,
-                        'name' => $positionData['name'] ?? null,
-                        'model' => $positionData['model'] ?? null,
-                        'cena' => $positionData['cena'] ?? 0,
-                        'sirina' => $positionData['sirina'] ?? 0,
-                        'visina' => $positionData['visina'] ?? 0,
+                        'product_id'  => $positionData['product_id'] ?? null,
+                        'name'        => $positionData['name'] ?? null,
+                        'model'       => $positionData['model'] ?? null,
+                        'cena'        => $positionData['cena'] ?? 0,
+                        'sirina'      => $positionData['sirina'] ?? 0,
+                        'visina'      => $positionData['visina'] ?? 0,
                         'sirina_type' => $positionData['sirina_type'] ?? 'mehanizam',
-                        'mehanizam' => $positionData['mehanizam'] ?? 'standard',
-                        'broj_kom' => $positionData['br_kom'] ?? 1,
-                        'potez' => $positionData['potez'] ?? 'levo',
-                        'kacenje' => $positionData['kacenje'] ?? 'plafon',
-                        'maska_boja' => $positionData['maska_boja'] ?? null,
-                        'napomena' => $positionData['napomena'] ?? null,
+                        'mehanizam'   => $positionData['mehanizam'] ?? 'standard',
+                        'broj_kom'    => $positionData['br_kom'] ?? 1, // mapiranje iz forme
+                        'potez'       => $positionData['potez'] ?? 'levo',
+                        'kacenje'     => $positionData['kacenje'] ?? 'plafon',
+                        'maska_boja'  => $positionData['maska_boja'] ?? null,
+                        'napomena'    => $positionData['napomena'] ?? null,
                     ]);
                 } elseif ($type === 'plise') {
                     $pozicija = PozicijaPlise::create([
                         'product_id' => $positionData['product_id'] ?? null,
-                        'name' => $positionData['name'] ?? null,
-                        'model' => $positionData['model'] ?? null,
-                        'cena' => $positionData['cena'] ?? 0,
-                        'sirina' => $positionData['sirina'] ?? 0,
-                        'visina' => $positionData['visina'] ?? 0,
-                        'mehanizam' => $positionData['mehanizam'] ?? 'standard',
-                        'broj_kom' => $positionData['br_kom'] ?? 1,
-                        'potez' => $positionData['potez'] ?? 'levo',
+                        'name'       => $positionData['name'] ?? null,
+                        'model'      => $positionData['model'] ?? null,
+                        'cena'       => $positionData['cena'] ?? 0,
+                        'sirina'     => $positionData['sirina'] ?? 0,
+                        'visina'     => $positionData['visina'] ?? 0,
+                        'mehanizam'  => $positionData['mehanizam'] ?? 'standard',
+                        'broj_kom'   => $positionData['br_kom'] ?? 1, // mapiranje iz forme
+                        'potez'      => $positionData['potez'] ?? 'levo',
                         'maska_boja' => $positionData['maska_boja'] ?? null,
-                        'napomena' => $positionData['napomena'] ?? null,
+                        'napomena'   => $positionData['napomena'] ?? null,
                     ]);
                 } else {
                     continue;
@@ -127,14 +134,15 @@ class EditWorkOrder extends EditRecord
                 WorkOrderPosition::create([
                     'work_order_id' => $record->id,
                     'pozicija_type' => $type,
-                    'pozicija_id' => $pozicija->id,
-                    'naziv' => $positionData['name'] ?? null,
-                    'napomena' => $positionData['napomena'] ?? null,
+                    'pozicija_id'   => $pozicija->id,
+                    'naziv'         => $positionData['name'] ?? null,
+                    'napomena'      => $positionData['napomena'] ?? null,
                 ]);
 
                 continue;
             }
 
+            // UPDATE POSTOJEĆE POZICIJE
             if ($type === 'metraza') {
                 $pozicija = PozicijaMetraza::find($pozicijaId);
             } elseif ($type === 'garnisna') {
@@ -149,18 +157,26 @@ class EditWorkOrder extends EditRecord
                 continue;
             }
 
-            $pozicija->update(
-                collect($positionData)->except(['pozicija_id', 'position_type', 'name', 'napomena'])->toArray()
-            );
+            // ne izbacujemo 'name' iz update-a; mapiramo 'br_kom' -> 'broj_kom'
+            $dataToUpdate = collect($positionData)
+                ->except(['pozicija_id', 'position_type']) // zadržavamo 'name' i sve ostalo
+                ->toArray();
+
+            // if (array_key_exists('br_kom', $dataToUpdate)) {
+            //     $dataToUpdate['broj_kom'] = $dataToUpdate['br_kom'];
+            //     unset($dataToUpdate['br_kom']);
+            // }
+
+            $pozicija->update($dataToUpdate);
 
             WorkOrderPosition::updateOrCreate(
                 [
                     'work_order_id' => $record->id,
                     'pozicija_type' => $type,
-                    'pozicija_id' => $pozicijaId,
+                    'pozicija_id'   => $pozicijaId,
                 ],
                 [
-                    'naziv' => $positionData['name'] ?? null,
+                    'naziv'    => $positionData['name'] ?? null,
                     'napomena' => $positionData['napomena'] ?? null,
                 ]
             );

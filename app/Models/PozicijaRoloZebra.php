@@ -19,19 +19,21 @@ class PozicijaRoloZebra extends Model
     // Custom table name (Laravel would otherwise pluralize incorrectly)
     protected $table = 'pozicija_rolo_zebra';
 
-    protected $fillable = [
-        'product_id',   // id proizvoda (naziv platna)
-        'sirina',       // širina u metrima
-        'visina',       // visina u metrima
-        'sirina_type',  // da li se širina odnosi na mehanizam ili platno
-        'mehanizam',    // mini ili standard
-        'broj_kom',     // broj komada
-        'potez',        // levo ili desno
-        'kacenje',      // plafon, zid ili pvc kačenje
-        'maska_boja',   // maska / boja
-        'napomena',     // napomena (nullable)
-    ];
-
+        protected $fillable = [
+            'product_id',
+            'name',   // naziv pozicije
+            'model',  // ručni naziv modela
+            'cena',   // cena
+            'sirina',
+            'visina',
+            'sirina_type',
+            'mehanizam',
+            'broj_kom',
+            'potez',
+            'kacenje',
+            'maska_boja',
+            'napomena',
+        ];
     public function product()
     {
         return $this->belongsTo(Product::class);

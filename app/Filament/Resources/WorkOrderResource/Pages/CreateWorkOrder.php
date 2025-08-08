@@ -46,8 +46,10 @@ class CreateWorkOrder extends CreateRecord
                     'nabor'       => $position['nabor'] ?? null,
                     'broj_delova' => $position['broj_delova'] ?? null,
                     'product_id'  => $position['product_id'] ?? null,
+                    'model'        => $position['model'] ?? null,     // NOVO
                     'cena'        => $position['cena'] ?? 0,
                     'name'        => $position['name'] ?? null,
+                    'br_kom'     => $position['br_kom'] ?? 1,       // NOVO (mapiranje)
                 ]);
             } elseif ($type === 'garnisna') {
                 $pozicija = PozicijaGarnisna::create([
@@ -55,28 +57,38 @@ class CreateWorkOrder extends CreateRecord
                     'product_id' => $position['product_id'] ?? null,
                     'cena'       => $position['cena'] ?? 0,
                     'name'       => $position['name'] ?? null,
+                    'model'      => $position['model'] ?? null,       // NOVO
+                    'br_kom'   => $position['br_kom'] ?? 1,         // NOVO (mapiranje)
+
+
                 ]);
             } elseif ($type === 'rolo_zebra') {
                 // kreiranje rolo/zebra
-                $pozicija = PozicijaRoloZebra::create([
-                    'product_id'  => $position['product_id'] ?? null,
-                    'sirina'      => $position['sirina'] ?? 0,
-                    'visina'      => $position['visina'] ?? 0,
-                    'sirina_type' => $position['sirina_type'] ?? 'mehanizam',
-                    'mehanizam'   => $position['mehanizam'] ?? 'standard',
-                    'broj_kom'    => $position['br_kom'] ?? 1,
-                    'potez'       => $position['potez'] ?? 'levo',
-                    'kacenje'     => $position['kacenje'] ?? 'plafon',
-                    'maska_boja'  => $position['maska_boja'] ?? null,
-                    'name'  => $position['name'] ?? null,
-                    'model'  => $position['model'] ?? null,
-                    'cena'  => $position['cena'] ?? null,
-                    'napomena'    => $position['napomena'] ?? null,
-                ]);
+              // Rolo/Zebra
+                    $pozicija = PozicijaRoloZebra::create([
+                        'product_id'  => $position['product_id'] ?? null,
+                        'name'        => $position['name'] ?? null,
+                        'model'       => $position['model'] ?? null,
+                        'cena'        => $position['cena'] ?? 0,
+                        'sirina'      => $position['sirina'] ?? 0,
+                        'visina'      => $position['visina'] ?? 0,
+                        'sirina_type' => $position['sirina_type'] ?? 'mehanizam',
+                        'mehanizam'   => $position['mehanizam'] ?? 'standard',
+                        'broj_kom'    => $position['br_kom'] ?? 1,
+                        'potez'       => $position['potez'] ?? 'levo',
+                        'kacenje'     => $position['kacenje'] ?? 'plafon',
+                        'maska_boja'  => $position['maska_boja'] ?? null,
+                        'napomena'    => $position['napomena'] ?? null,
+                    ]);
             } elseif ($type === 'plise') {
                 // kreiranje plise
+                            
+                // Plise
                 $pozicija = PozicijaPlise::create([
                     'product_id' => $position['product_id'] ?? null,
+                    'name'       => $position['name'] ?? null,
+                    'model'      => $position['model'] ?? null,
+                    'cena'       => $position['cena'] ?? 0,
                     'sirina'     => $position['sirina'] ?? 0,
                     'visina'     => $position['visina'] ?? 0,
                     'mehanizam'  => $position['mehanizam'] ?? 'standard',
@@ -84,9 +96,6 @@ class CreateWorkOrder extends CreateRecord
                     'potez'      => $position['potez'] ?? 'levo',
                     'maska_boja' => $position['maska_boja'] ?? null,
                     'napomena'   => $position['napomena'] ?? null,
-                    'name'  => $position['name'] ?? null,
-                    'model'  => $position['model'] ?? null,
-                    'cena'  => $position['cena'] ?? null,
                 ]);
             } else {
                 continue;
