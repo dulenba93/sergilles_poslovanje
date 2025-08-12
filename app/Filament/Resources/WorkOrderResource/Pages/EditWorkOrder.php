@@ -59,7 +59,19 @@ class EditWorkOrder extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->update($data);
+        $record->update([
+            'customer_name'   => $data['customer_name'] ?? $record->customer_name,
+            'phone'           => $data['phone'] ?? $record->phone,
+            'email'           => $data['email'] ?? $record->email,
+            'address'         => $data['address'] ?? $record->address,
+            'note'            => $data['note'] ?? $record->note,
+            'status'          => $data['status'] ?? $record->status,
+            'scheduled_at'    => $data['scheduled_at'] ?? $record->scheduled_at,
+            'cena_montaze'    => $data['cena_montaze'] ?? $record->cena_montaze,
+            'total_price'     => $data['total_price'] ?? $record->total_price,
+            'advance_payment' => $data['advance_payment'] ?? $record->advance_payment,
+            'type'            => $record->type, // ← čuvamo type iz forme
+        ]);
 
         // brišemo postojeće pivote i rekonstrušemo ih iz forme
         WorkOrderPosition::where('work_order_id', $record->id)->delete();

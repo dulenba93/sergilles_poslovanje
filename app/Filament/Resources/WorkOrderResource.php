@@ -151,7 +151,7 @@ class WorkOrderResource extends Resource
                                     // Cena i broj komada u istom redu
                                     Grid::make(2)->schema([
                                         TextInput::make('cena')->numeric()->label('Cena')->default(0)->required(),
-                                        TextInput::make('br_kom')
+                                        TextInput::make('broj_kom')
                                             ->numeric()
                                             ->label('Broj komada')
                                             ->default(1)
@@ -163,7 +163,7 @@ class WorkOrderResource extends Resource
                                     // Dužina i broj komada u istom redu
                                     Grid::make(2)->schema([
                                         TextInput::make('duzina')->numeric()->label('Dužina')->default(1)->required(),
-                                        TextInput::make('br_kom')
+                                        TextInput::make('broj_kom')
                                             ->numeric()
                                             ->label('Broj komada')
                                             ->default(1)
@@ -224,7 +224,7 @@ class WorkOrderResource extends Resource
                                         ->label('Cena')
                                         ->default(0)
                                         ->required(),
-                                    TextInput::make('br_kom')
+                                    TextInput::make('broj_kom')
                                         ->numeric()
                                         ->label('Broj komada')
                                         ->default(1)
@@ -268,7 +268,7 @@ class WorkOrderResource extends Resource
                                         ->label('Cena')
                                         ->default(0)
                                         ->required(),
-                                    TextInput::make('br_kom')
+                                    TextInput::make('broj_kom')
                                         ->numeric()
                                         ->label('Broj komada')
                                         ->default(1)
@@ -291,7 +291,7 @@ class WorkOrderResource extends Resource
 
                       foreach ($positions as $item) {
                             $cena   = isset($item['cena']) ? (float) $item['cena'] : 0;
-                            $br_kom = isset($item['br_kom']) ? (float) $item['br_kom'] : 1;
+                            $br_kom = isset($item['broj_kom']) ? (float) $item['broj_kom'] : 1;
                             $type   = $item['position_type'] ?? null;
 
                             if (in_array($type, ['metraza', 'garnisna'])) {
@@ -369,7 +369,12 @@ class WorkOrderResource extends Resource
                                             default => 'secondary',
                                         })
                                         ->searchable(),
-
+                                        
+                                    Tables\Columns\TextColumn::make('type')
+                                        ->label('Tip')
+                                        ->sortable()
+                                        ->searchable(),
+                                                                
                                     SelectColumn::make('status')
                                         ->label('Status')
                                         ->options([
@@ -395,36 +400,36 @@ class WorkOrderResource extends Resource
                                             default => null,
                                         }),
 
-                TextColumn::make('tip_placanja')->label('Tip Plaćanja'),
+                                            TextColumn::make('tip_placanja')->label('Tip Plaćanja'),
 
-                TextColumn::make('remaining_payment')
-                    ->label('Preostalo za naplatu')
-                    ->money('RSD')
-                    ->state(function ($record) {
-                        return $record->total_price - $record->advance_payment;
-                    })
-                    ->weight('bold'),
+                                            TextColumn::make('remaining_payment')
+                                                ->label('Preostalo za naplatu')
+                                                ->money('RSD')
+                                                ->state(function ($record) {
+                                                    return $record->total_price - $record->advance_payment;
+                                                })
+                                                ->weight('bold'),
 
-                TextColumn::make('total_price')->label('Ukupna cena')->money('RSD'),
-                TextColumn::make('advance_payment')->label('Plaćeno do sad')->money('RSD'),
-                TextColumn::make('cena_montaze')->label('Montaža')->money('RSD'),
-                TextColumn::make('note')->label('Napomena')->limit(30)->searchable(),
-            ])
-            ->defaultSort('created_at', 'desc')
-            ->actions([
-                Tables\Actions\Action::make('prikazi')
-                    ->label('Detalji')
-                    ->icon('heroicon-o-eye')
-                    ->modalHeading('Detalji naloga')
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Zatvori')
-                    ->modalContent(fn (WorkOrder $record): \Illuminate\Contracts\View\View =>
-                        view('filament.resources.work-order-resource.partials.expand-row', [
-                            'record' => $record,
-                        ])
-                    ),
-            ]);
-    }
+                                            TextColumn::make('total_price')->label('Ukupna cena')->money('RSD'),
+                                            TextColumn::make('advance_payment')->label('Plaćeno do sad')->money('RSD'),
+                                            TextColumn::make('cena_montaze')->label('Montaža')->money('RSD'),
+                                            TextColumn::make('note')->label('Napomena')->limit(30)->searchable(),
+                                        ])
+                                        ->defaultSort('created_at', 'desc')
+                                        ->actions([
+                                            Tables\Actions\Action::make('prikazi')
+                                                ->label('Detalji')
+                                                ->icon('heroicon-o-eye')
+                                                ->modalHeading('Detalji naloga')
+                                                ->modalSubmitAction(false)
+                                                ->modalCancelActionLabel('Zatvori')
+                                                ->modalContent(fn (WorkOrder $record): \Illuminate\Contracts\View\View =>
+                                                    view('filament.resources.work-order-resource.partials.expand-row', [
+                                                        'record' => $record,
+                                                    ])
+                                                ),
+                                        ]);
+                                }
 
     public static function getPages(): array
     {

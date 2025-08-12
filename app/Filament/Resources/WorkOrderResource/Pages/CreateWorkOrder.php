@@ -24,20 +24,28 @@ class CreateWorkOrder extends CreateRecord
 
         // 2. Create Work Order
         $workOrder = WorkOrder::create([
-            'customer_name' => $data['customer_name'],
-            'phone'         => $data['phone'],
-            'email'         => $data['email'] ?? null,     // ✅ čuvanje email
-            'address'       => $data['address'] ?? null,
-            'note'          => $data['note'] ?? null,       // ✅ čuvanje note
-            'status'        => $data['status'],
-            'scheduled_at'  => $data['scheduled_at'] ?? null,
-            'cena_montaze'  => $data['cena_montaze'] ?? 0,
-            'total_price'   => $data['total_price'] ?? 0,
-            'advance_payment' => $data['advance_payment'] ?? 0,
+            'customer_name'    => $data['customer_name'],
+            'phone'            => $data['phone'],
+            'email'            => $data['email'] ?? null,
+            'address'          => $data['address'] ?? null,
+            'note'             => $data['note'] ?? null,
+            'status'           => $data['status'],
+            'scheduled_at'     => $data['scheduled_at'] ?? null,
+            'cena_montaze'     => $data['cena_montaze'] ?? 0,
+            'total_price'      => $data['total_price'] ?? 0,
+            'advance_payment'  => $data['advance_payment'] ?? 0,
+            'type'            => $data['type'] ?? 'USLUGA', // ✅ Dodato
+
         ]);
 
-       foreach ($positions as $position) {
+        foreach ($positions as $position) {
             $type = $position['position_type'];
+
+            // ✅ Uvek minimum 1 komad
+            $brojKom = (int)($position['broj_kom'] ?? $position['br_kom'] ?? 1);
+            if ($brojKom < 1) {
+                $brojKom = 1;
+            }
 
             if ($type === 'metraza') {
                 $pozicija = PozicijaMetraza::create([
@@ -46,10 +54,10 @@ class CreateWorkOrder extends CreateRecord
                     'nabor'       => $position['nabor'] ?? null,
                     'broj_delova' => $position['broj_delova'] ?? null,
                     'product_id'  => $position['product_id'] ?? null,
-                    'model'        => $position['model'] ?? null,     // NOVO
+                    'model'       => $position['model'] ?? null,
                     'cena'        => $position['cena'] ?? 0,
                     'name'        => $position['name'] ?? null,
-                    'br_kom'     => $position['br_kom'] ?? 1,       // NOVO (mapiranje)
+                    'broj_kom'    => $brojKom,
                 ]);
             } elseif ($type === 'garnisna') {
                 $pozicija = PozicijaGarnisna::create([
@@ -57,33 +65,26 @@ class CreateWorkOrder extends CreateRecord
                     'product_id' => $position['product_id'] ?? null,
                     'cena'       => $position['cena'] ?? 0,
                     'name'       => $position['name'] ?? null,
-                    'model'      => $position['model'] ?? null,       // NOVO
-                    'br_kom'   => $position['br_kom'] ?? 1,         // NOVO (mapiranje)
-
-
+                    'model'      => $position['model'] ?? null,
+                    'broj_kom'   => $brojKom,
                 ]);
             } elseif ($type === 'rolo_zebra') {
-                // kreiranje rolo/zebra
-              // Rolo/Zebra
-                    $pozicija = PozicijaRoloZebra::create([
-                        'product_id'  => $position['product_id'] ?? null,
-                        'name'        => $position['name'] ?? null,
-                        'model'       => $position['model'] ?? null,
-                        'cena'        => $position['cena'] ?? 0,
-                        'sirina'      => $position['sirina'] ?? 0,
-                        'visina'      => $position['visina'] ?? 0,
-                        'sirina_type' => $position['sirina_type'] ?? 'mehanizam',
-                        'mehanizam'   => $position['mehanizam'] ?? 'standard',
-                        'broj_kom'    => $position['br_kom'] ?? 1,
-                        'potez'       => $position['potez'] ?? 'levo',
-                        'kacenje'     => $position['kacenje'] ?? 'plafon',
-                        'maska_boja'  => $position['maska_boja'] ?? null,
-                        'napomena'    => $position['napomena'] ?? null,
-                    ]);
+                $pozicija = PozicijaRoloZebra::create([
+                    'product_id'  => $position['product_id'] ?? null,
+                    'name'        => $position['name'] ?? null,
+                    'model'       => $position['model'] ?? null,
+                    'cena'        => $position['cena'] ?? 0,
+                    'sirina'      => $position['sirina'] ?? 0,
+                    'visina'      => $position['visina'] ?? 0,
+                    'sirina_type' => $position['sirina_type'] ?? 'mehanizam',
+                    'mehanizam'   => $position['mehanizam'] ?? 'standard',
+                    'broj_kom'    => $brojKom,
+                    'potez'       => $position['potez'] ?? 'levo',
+                    'kacenje'     => $position['kacenje'] ?? 'plafon',
+                    'maska_boja'  => $position['maska_boja'] ?? null,
+                    'napomena'    => $position['napomena'] ?? null,
+                ]);
             } elseif ($type === 'plise') {
-                // kreiranje plise
-                            
-                // Plise
                 $pozicija = PozicijaPlise::create([
                     'product_id' => $position['product_id'] ?? null,
                     'name'       => $position['name'] ?? null,
@@ -92,7 +93,7 @@ class CreateWorkOrder extends CreateRecord
                     'sirina'     => $position['sirina'] ?? 0,
                     'visina'     => $position['visina'] ?? 0,
                     'mehanizam'  => $position['mehanizam'] ?? 'standard',
-                    'broj_kom'   => $position['br_kom'] ?? 1,
+                    'broj_kom'   => $brojKom,
                     'potez'      => $position['potez'] ?? 'levo',
                     'maska_boja' => $position['maska_boja'] ?? null,
                     'napomena'   => $position['napomena'] ?? null,
@@ -109,6 +110,7 @@ class CreateWorkOrder extends CreateRecord
                 'napomena'      => $position['napomena'] ?? null,
             ]);
         }
+
         return $workOrder;
     }
 }

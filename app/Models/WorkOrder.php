@@ -48,7 +48,7 @@ class WorkOrder extends Model
                     }
 
                     // normalize form -> db column for quantity
-                    $brojKom = $positionData['br_kom'] ?? $positionData['broj_kom'] ?? 1;
+                    // $brojKom = $positionData['br_kom'] ?? $positionData['broj_kom'] ?? 1;
 
                     if ($type === 'metraza') {
                         $pozicija = PozicijaMetraza::create([
@@ -115,5 +115,16 @@ class WorkOrder extends Model
                 }
             }
         });
+
+    static::updating(function (WorkOrder $order) {
+        if ($order->isDirty('cena_montaze')) {
+            $old = (float) $order->getOriginal('cena_montaze');
+            $new = (float) ($order->cena_montaze ?? 0);
+            $delta = $new - $old;
+
+            $currentTotal = (float) ($order->total_price ?? 0);
+            $order->total_price = $currentTotal + $delta;
+        }
+    });
     }
 }

@@ -103,4 +103,9 @@
         <x-filament::button tag="a" color="danger" href="{{ route('work-orders.pdf', $record) }}" target="_blank">
             Export PDF
         </x-filament::button>
+
+        <x-filament::button tag="a" color="warning" href="{{ route('work-orders.proforma', $record) }}" target="_blank">
+            Profaktura (Excel)
+        </x-filament::button>
+
 </div>

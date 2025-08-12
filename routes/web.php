@@ -14,3 +14,7 @@ Route::get('/', function () {
 
 Route::get('/work-orders/{workOrder}/pdf', [WorkOrderController::class, 'exportPdf'])
      ->name('work-orders.pdf');
+
+     // Export profaktura (pro-forma invoice) to Excel
+Route::get('/work-orders/{workOrder}/proforma', [WorkOrderController::class, 'exportProforma'])
+    ->name('work-orders.proforma');
