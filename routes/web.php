@@ -4,17 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Services\FirestoreRestService;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\WorkOrderExportController;
+use App\Http\Controllers\WorkOrderController;
+
 
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-
-
-Route::get('/work-orders/{workOrder}/export/pdf', [WorkOrderExportController::class, 'pdf'])
-    ->name('work-orders.export.pdf');
-
-Route::get('/work-orders/{workOrder}/export/excel', [WorkOrderExportController::class, 'excel'])
-    ->name('work-orders.export.excel');
+Route::get('/work-orders/{workOrder}/pdf', [WorkOrderController::class, 'exportPdf'])
+     ->name('work-orders.pdf');

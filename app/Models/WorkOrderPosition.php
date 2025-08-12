@@ -22,23 +22,36 @@ class WorkOrderPosition extends Model
         return $this->belongsTo(WorkOrder::class);
     }
 
-        public function metraza()
-        {
-            return $this->belongsTo(\App\Models\PozicijaMetraza::class, 'pozicija_id')->where('pozicija_type', 'metraza');
-        }
-        public function garnisna()
-        {
-            return $this->belongsTo(\App\Models\PozicijaGarnisna::class, 'pozicija_id')->where('pozicija_type', 'garnisna');
-        }
-        public function roloZebra()
-        {
-            return $this->belongsTo(\App\Models\PozicijaRoloZebra::class, 'pozicija_id')
-                ->where('pozicija_type', 'rolo_zebra');
-        }
+    // VAŽNO: bez where() uslova — te kolone nema u child tabelama
+    public function metraza()
+    {
+        return $this->belongsTo(PozicijaMetraza::class, 'pozicija_id');
+    }
 
-        public function plise()
-        {
-            return $this->belongsTo(\App\Models\PozicijaPlise::class, 'pozicija_id')
-                ->where('pozicija_type', 'plise');
-        }
+    public function garnisna()
+    {
+        return $this->belongsTo(PozicijaGarnisna::class, 'pozicija_id');
+    }
+
+    public function roloZebra()
+    {
+        return $this->belongsTo(PozicijaRoloZebra::class, 'pozicija_id');
+    }
+
+    public function plise()
+    {
+        return $this->belongsTo(PozicijaPlise::class, 'pozicija_id');
+    }
+
+    // Jedinstvena “pozicija” za view/pdf
+    public function getPozicijaAttribute()
+    {
+        return match ($this->pozicija_type) {
+            'metraza'    => $this->metraza,
+            'garnisna'   => $this->garnisna,
+            'rolo_zebra' => $this->roloZebra,
+            'plise'      => $this->plise,
+            default      => null,
+        };
+    }
 }

@@ -100,20 +100,7 @@
     @else
         <p class="text-gray-500 italic">Nema dodatih pozicija za ovaj nalog.</p>
     @endif
-        <div class="flex gap-2">
-            <x-filament::button tag="a"
-                href="{{ route('work-orders.export.pdf', $record) }}"
-                target="_blank">
-                Export PDF
-            </x-filament::button>
-
-            <x-filament::button tag="a"
-                href="{{ route('work-orders.export.excel', $record) }}"
-                target="_blank"
-                color="info">
-                Export Excel
-            </x-filament::button>
-        </div>
-
-
+        <x-filament::button tag="a" color="danger" href="{{ route('work-orders.pdf', $record) }}" target="_blank">
+            Export PDF
+        </x-filament::button>
 </div>
