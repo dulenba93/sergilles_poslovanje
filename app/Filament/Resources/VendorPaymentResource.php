@@ -20,6 +20,8 @@ class VendorPaymentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationLabel = 'Plaćanja dobavljačima';
+    protected static ?string $navigationGroup = 'IZLAZ';
+
     
 
     public static function form(Form $form): Form

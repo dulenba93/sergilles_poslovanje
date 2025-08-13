@@ -33,6 +33,7 @@ class WorkOrderResource extends Resource
     protected static ?string $navigationLabel = 'Radni Nalozi';
     protected static ?string $pluralLabel = 'Radni Nalozi';
     protected static ?string $modelLabel = 'Radni Nalog';
+    protected static ?string $navigationGroup = 'ULAZ';
 
     public static function form(Form $form): Form
     {
