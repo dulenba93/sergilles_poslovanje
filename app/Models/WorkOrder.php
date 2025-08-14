@@ -23,6 +23,7 @@ class WorkOrder extends Model
         'note',
         'order_type',
         'code',
+        'type',
         'tip_placanja',
     ];
 

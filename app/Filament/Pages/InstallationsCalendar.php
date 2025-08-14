@@ -64,7 +64,7 @@ class InstallationsCalendar extends Page
         );
     }
 
-    /** Map Y-m-d => WorkOrder[] for current week */
+    /** Map Y-m-d => WorkOrder[] for current week (scheduled only) */
     public function getEvents(): array
     {
         [$start, $end] = $this->getWeekRange();
@@ -82,6 +82,17 @@ class InstallationsCalendar extends Page
             $byDay[$key][] = $o;
         }
         return $byDay;
+    }
+
+    /** Unscheduled orders (no date), limited to relevant statuses */
+    public function getUnscheduledOrders()
+    {
+        return WorkOrder::query()
+            ->select(['id', 'code', 'customer_name', 'status', 'scheduled_at', 'type', 'phone'])
+            ->whereNull('scheduled_at')
+            ->whereIn('status', ['new', 'in_progress'])
+            ->orderByDesc('id')
+            ->get();
     }
 
     /** Count orders missing a date (new/in_progress) */
@@ -148,7 +159,6 @@ class InstallationsCalendar extends Page
                 ->body('Nalog nije pronađen.')
                 ->danger()
                 ->send();
-
             return;
         }
 
@@ -163,7 +173,7 @@ class InstallationsCalendar extends Page
         $order->scheduled_at = $newDateTime;
         $order->save();
 
-        // Optional: if modal is open for this order, refresh it
+        // If modal is open for this order, refresh it
         if ($this->modalOrder && $this->modalOrder->id === $order->id) {
             $this->modalOrder->refresh()->load([
                 'positions',
@@ -174,14 +184,52 @@ class InstallationsCalendar extends Page
             ]);
         }
 
-        // Success toast
         Notification::make()
             ->title('Datum promenjen')
-            ->body("Nalog #{$order->code} je premešten na " . $newDateTime->format('d.m.Y') . '.')
+            ->body("Nalog #{$order->code} je zakazan za " . $newDateTime->format('d.m.Y') . '.')
             ->success()
             ->send();
 
-        // Re-render component so columns recalc events
+        $this->dispatch('$refresh');
+    }
+
+    /**
+     * Drop to UNSCHEDULED pool -> remove date (scheduled_at = null)
+     */
+    public function unscheduleOrder(int $workOrderId): void
+    {
+        $order = WorkOrder::find($workOrderId);
+
+        if (! $order) {
+            Notification::make()
+                ->title('Greška')
+                ->body('Nalog nije pronađen.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        $order->scheduled_at = null;
+        $order->save();
+
+        // If modal is open for this order, refresh it
+        if ($this->modalOrder && $this->modalOrder->id === $order->id) {
+            $this->modalOrder->refresh()->load([
+                'positions',
+                'positions.metraza.product',
+                'positions.garnisna.product',
+                'positions.roloZebra.product',
+                'positions.plise.product',
+            ]);
+        }
+
+        Notification::make()
+            ->title('Datum uklonjen')
+            ->body("Nalog #{$order->code} je vraćen u neraspoređene.")
+            ->warning()
+            ->send();
+
         $this->dispatch('$refresh');
     }
 }
+    

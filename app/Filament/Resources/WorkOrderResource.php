@@ -24,6 +24,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Carbon\Carbon;
 use Filament\Tables\Columns\ViewColumn;
+use Filament\Tables\Actions\BulkAction;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SelectedPositionsExport;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+
 
 class WorkOrderResource extends Resource
 {
@@ -152,7 +157,7 @@ class WorkOrderResource extends Resource
                                     // Cena i broj komada u istom redu
                                     Grid::make(2)->schema([
                                         TextInput::make('cena')->numeric()->label('Cena')->default(0)->required(),
-                                        TextInput::make('broj_kom')
+                                        TextInput::make('broj_kom')->default(1)->required()
                                             ->numeric()
                                             ->label('Broj komada')
                                             ->default(1)
@@ -163,8 +168,8 @@ class WorkOrderResource extends Resource
                                 'garnisna' => [
                                     // Dužina i broj komada u istom redu
                                     Grid::make(2)->schema([
-                                        TextInput::make('duzina')->numeric()->label('Dužina')->default(1)->required(),
-                                        TextInput::make('broj_kom')
+                                        TextInput::make('duzina')->numeric()->label('Dužina u m')->default(1)->required(),
+                                        TextInput::make('broj_kom')->default(1)->required()
                                             ->numeric()
                                             ->label('Broj komada')
                                             ->default(1)
@@ -253,7 +258,7 @@ class WorkOrderResource extends Resource
                                 Grid::make(2)->schema([
                                     Select::make('mehanizam')
                                         ->label('Mehanizam')
-                                        ->options(['mini' => 'Mini', 'standard' => 'Standard'])
+                                        ->options(['standard' => 'Standard', 'zabice' => 'Zabice', 'lepljenje' => 'Lepljenje'])
                                         ->default('standard')
                                         ->required(),
                                     Select::make('potez')
@@ -429,7 +434,30 @@ class WorkOrderResource extends Resource
                                                         'record' => $record,
                                                     ])
                                                 ),
-                                        ]);
+                                        ])
+                                           ->bulkActions([
+                                                    BulkAction::make('exportSelectedExcel')
+                                                        ->label('Export po poziciji (Excel)')
+                                                        ->icon('heroicon-o-arrow-down-tray')
+                                                        ->requiresConfirmation() // da korisnik potvrdi
+                                                        ->action(function (EloquentCollection $records) {
+                                                            // $records is Eloquent\Collection of WorkOrder models
+
+                                                            if ($records->isEmpty()) {
+                                                                Notification::make()
+                                                                    ->title('Nije izabrano ništa')
+                                                                    ->warning()
+                                                                    ->send();
+                                                                return;
+                                                            }
+
+                                                            $ids = $records->pluck('id')->all();
+                                                            $fileName = 'Pozicije-selekcija-' . now()->format('Ymd-His') . '.xlsx';
+
+                                                            // Return download response
+                                                            return Excel::download(new SelectedPositionsExport($ids), $fileName);
+                                                        }),
+                                            ]);
                                 }
 
     public static function getPages(): array

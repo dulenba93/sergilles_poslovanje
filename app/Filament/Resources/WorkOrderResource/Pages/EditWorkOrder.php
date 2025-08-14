@@ -70,7 +70,7 @@ class EditWorkOrder extends EditRecord
             'cena_montaze'    => $data['cena_montaze'] ?? $record->cena_montaze,
             'total_price'     => $data['total_price'] ?? $record->total_price,
             'advance_payment' => $data['advance_payment'] ?? $record->advance_payment,
-            'type'            => $record->type, // ← čuvamo type iz forme
+            'type' => $data['type'] ?? $record->type,
         ]);
 
         // brišemo postojeće pivote i rekonstrušemo ih iz forme
@@ -119,7 +119,7 @@ class EditWorkOrder extends EditRecord
                         'visina'      => $positionData['visina'] ?? 0,
                         'sirina_type' => $positionData['sirina_type'] ?? 'mehanizam',
                         'mehanizam'   => $positionData['mehanizam'] ?? 'standard',
-                        'broj_kom'    => $positionData['br_kom'] ?? 1, // mapiranje iz forme
+                        'broj_kom'    => $positionData['br_kom'] ?? $positionData['broj_kom'] ?? 1,
                         'potez'       => $positionData['potez'] ?? 'levo',
                         'kacenje'     => $positionData['kacenje'] ?? 'plafon',
                         'maska_boja'  => $positionData['maska_boja'] ?? null,
@@ -134,7 +134,7 @@ class EditWorkOrder extends EditRecord
                         'sirina'     => $positionData['sirina'] ?? 0,
                         'visina'     => $positionData['visina'] ?? 0,
                         'mehanizam'  => $positionData['mehanizam'] ?? 'standard',
-                        'broj_kom'   => $positionData['br_kom'] ?? 1, // mapiranje iz forme
+                        'broj_kom'   => $positionData['br_kom'] ?? $positionData['broj_kom'] ?? 1,
                         'potez'      => $positionData['potez'] ?? 'levo',
                         'maska_boja' => $positionData['maska_boja'] ?? null,
                         'napomena'   => $positionData['napomena'] ?? null,

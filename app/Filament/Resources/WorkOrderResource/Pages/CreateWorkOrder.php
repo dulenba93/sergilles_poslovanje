@@ -79,6 +79,7 @@ class CreateWorkOrder extends CreateRecord
                     'sirina_type' => $position['sirina_type'] ?? 'mehanizam',
                     'mehanizam'   => $position['mehanizam'] ?? 'standard',
                     'broj_kom'    => $brojKom,
+                    'br_kom'      => $brojKom,
                     'potez'       => $position['potez'] ?? 'levo',
                     'kacenje'     => $position['kacenje'] ?? 'plafon',
                     'maska_boja'  => $position['maska_boja'] ?? null,
@@ -94,6 +95,7 @@ class CreateWorkOrder extends CreateRecord
                     'visina'     => $position['visina'] ?? 0,
                     'mehanizam'  => $position['mehanizam'] ?? 'standard',
                     'broj_kom'   => $brojKom,
+                    'br_kom'      => $brojKom,
                     'potez'      => $position['potez'] ?? 'levo',
                     'maska_boja' => $position['maska_boja'] ?? null,
                     'napomena'   => $position['napomena'] ?? null,
@@ -101,7 +103,6 @@ class CreateWorkOrder extends CreateRecord
             } else {
                 continue;
             }
-
             WorkOrderPosition::create([
                 'work_order_id' => $workOrder->id,
                 'pozicija_type' => $type,

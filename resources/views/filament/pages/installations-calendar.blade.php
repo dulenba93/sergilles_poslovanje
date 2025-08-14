@@ -8,15 +8,32 @@
             border: 1px solid #f59e0b; background: #fffbeb; color: #92400e;
             padding: 8px 10px; border-radius: 10px; margin-bottom: 12px;
         }
+
+        /* UNSCHEDULED POOL */
+        .unscheduled-wrap { margin: 12px 0 16px; }
+        .unscheduled-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+        .unscheduled-pool {
+            display: grid;
+            grid-template-columns: repeat( auto-fill, minmax(240px, 1fr) );
+            gap: 8px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            min-height: 56px;
+        }
+        .unscheduled-pool.drag-over { background: #eef6ff; border-color: #93c5fd; }
+
         table.calendar { width: 100%; border-collapse: collapse; table-layout: fixed; }
         table.calendar th, table.calendar td { border: 1px solid #e5e7eb; vertical-align: top; padding: 8px; }
         table.calendar th { background: #f9fafb; font-weight: 600; text-align: left; }
         .badge { font-size: 11px; padding: 1px 6px; border-radius: 999px; border: 1px solid #e5e7eb; background: #fff; }
         .event {
             border-radius: 8px; padding: 6px 8px; color: #111; border: 1px solid #e5e7eb; background: #f8fafc;
-            font-size: 12px; margin-bottom: 6px; text-decoration: none; display: block;
-            text-align: left;
+            font-size: 12px; text-decoration: none; display: block; text-align: left;
         }
+        .event + .event { margin-top: 6px; }
+
         /* Status colors */
         .status-new        { background: #dcfce7; border-color: #86efac; }
         .status-inprogress { background: #fef9c3; border-color: #fde68a; }
@@ -32,15 +49,16 @@
 
         /* Drag & drop hints */
         .drop-target { transition: background-color .15s ease; min-height: 40px; }
-        .drop-target.drag-over { background-color: #f0f9ff; } /* light hint on hover */
+        .drop-target.drag-over { background-color: #f0f9ff; }
         .event.dragging { opacity: .6; }
     </style>
 
     @php
         [$start, $end] = $this->getWeekRange();
-        $days   = $this->getWeekDays();
-        $events = $this->getEvents();
-        $missing = $this->getMissingCount();
+        $days        = $this->getWeekDays();
+        $events      = $this->getEvents();
+        $missing     = $this->getMissingCount();
+        $unscheduled = $this->getUnscheduledOrders(); // NOVO
 
         $srDays = ['Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota','Nedelja'];
 
@@ -63,12 +81,76 @@
         <div class="muted nowrap">
             Nedelja: {{ $start->format('d.m.Y') }} — {{ $end->format('d.m.Y') }}
         </div>
+        <div>
+        <a
+            class="btn"
+            href="{{ route('work-orders.week-pdf', ['week_start' => $start->toDateString()]) }}"
+            target="_blank"
+            title="Export u PDF"
+        >
+            Export kalendara montazi (PDF)
+        </a>
+    </div>
     </div>
 
     <div class="missing-card">
         Nalozi bez datuma montaže (status <strong>novi</strong> ili <strong>u toku</strong>): <strong>{{ $missing }}</strong>
     </div>
 
+    {{-- UNSCHEDULED POOL --}}
+    <div class="unscheduled-wrap">
+        <div class="unscheduled-head">
+            <div class="muted">Neraspoređene montaže — prevuci na dan u kalendaru da zakažeš</div>
+            <div class="badge">{{ $unscheduled->count() }} kom</div>
+        </div>
+
+        <div
+            class="unscheduled-pool drop-target"
+            x-data
+            @dragover.prevent
+            @dragenter.prevent="$el.classList.add('drag-over')"
+            @dragleave.prevent="$el.classList.remove('drag-over')"
+            @drop.prevent="
+                $el.classList.remove('drag-over');
+                try {
+                    const data = JSON.parse(event.dataTransfer.getData('text/plain') || '{}');
+                    if (data && data.id) { $wire.unscheduleOrder(data.id); }
+                } catch(e) {}
+            "
+            title="Prevuci ovde da ukloniš datum (vratiš u neraspoređene)"
+        >
+            @forelse ($unscheduled as $o)
+                @php $cls = $statusClass($o->status); @endphp
+                <button
+                    type="button"
+                    class="event {{ $cls }}"
+                    wire:click="openOrder({{ $o->id }})"
+                    draggable="true"
+                    x-data
+                    @dragstart="
+                        event.dataTransfer.setData('text/plain', JSON.stringify({ id: {{ $o->id }} }));
+                        event.dataTransfer.effectAllowed = 'move';
+                        $el.classList.add('dragging');
+                    "
+                    @dragend="$el.classList.remove('dragging')"
+                >
+                    <div><strong>#{{ $o->code }}</strong> — {{ $o->customer_name }}</div>
+                    <div class="dim">Tip: {{ $typeLabel($o->type ?? 'USLUGA') }}</div>
+                    <div class="dim">  Tel: {{ $o->phone }}</div>
+                    <div class="dim">Adresa: {{ $o->address ?: '—' }}</div>
+                    <div class="dim">
+                        Preostalo: {{
+                            number_format( (float)($o->total_price ?? 0) - (float)($o->advance_payment ?? 0), 2, ',', '.')
+                        }} RSD
+                    </div>
+                </button>
+            @empty
+                <div class="dim">Nema neraspoređenih naloga.</div>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- KALENDAR --}}
     <table class="calendar">
         <thead>
             <tr>
@@ -90,26 +172,22 @@
                         $items = $events[$key] ?? [];
                     @endphp
 
-                    {{-- Drop zone for this day --}}
                     <td
                         x-data
                         class="drop-target"
                         @dragover.prevent
-                        @dragenter.prevent="($el.classList.add('drag-over'))"
-                        @dragleave.prevent="($el.classList.remove('drag-over'))"
+                        @dragenter.prevent="$el.classList.add('drag-over')"
+                        @dragleave.prevent="$el.classList.remove('drag-over')"
                         @drop.prevent="
                             $el.classList.remove('drag-over');
                             try {
                                 const data = JSON.parse(event.dataTransfer.getData('text/plain') || '{}');
-                                if (data && data.id) {
-                                    $wire.moveOrder(data.id, '{{ $day->toDateString() }}');
-                                }
+                                if (data && data.id) { $wire.moveOrder(data.id, '{{ $day->toDateString() }}'); }
                             } catch(e) {}
                         "
                     >
                         @forelse ($items as $o)
                             @php $cls = $statusClass($o->status); @endphp
-
                             <button
                                 type="button"
                                 class="event {{ $cls }}"
@@ -125,9 +203,7 @@
                                 title="Prevuci na drugi dan da promeniš datum"
                             >
                                 <div><strong>#{{ $o->code }}</strong> — {{ $o->customer_name }}</div>
-                                <div class="dim">
-                                    Tip: {{ $typeLabel($o->type ?? 'USLUGA') }} • Tel: {{ $o->phone }}
-                                </div>
+                                <div class="dim">Tip: {{ $typeLabel($o->type ?? 'USLUGA') }} • Tel: {{ $o->phone }}</div>
                                 <div class="dim">Status: {{ $o->status }}</div>
                             </button>
                         @empty
@@ -139,7 +215,7 @@
         </tbody>
     </table>
 
-    {{-- FILAMENT MODAL: koristi open-modal/close-modal evente --}}
+    {{-- MODAL --}}
     <x-filament::modal
         id="work-order-modal"
         class="modal-wide"
@@ -160,7 +236,6 @@
 
         <div wire:key="work-order-modal-{{ optional($modalOrder)->id ?? 'empty' }}">
             @if ($modalOrder)
-                {{-- TAČAN partial koji već imaš --}}
                 @include('filament.resources.work-order-resource.partials.expand-row', [
                     'record' => $modalOrder,
                 ])

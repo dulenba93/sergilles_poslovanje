@@ -11,7 +11,12 @@ use App\Http\Controllers\BusinessOverviewExportController;
 use App\Http\Controllers\WorkOrderViewController;
 
 
+Route::get('/work-orders/{workOrder}/proforma-pdf', [WorkOrderController::class, 'exportProformaPdf'])
+    ->name('work-orders.proforma-pdf');
 
+
+Route::get('/work-orders/week-pdf', [WorkOrderController::class, 'exportWeekPdf'])
+    ->name('work-orders.week-pdf');
 
 Route::get('/work-orders/{workOrder}/expand', [WorkOrderViewController::class, 'show'])
     ->name('workorders.expand');

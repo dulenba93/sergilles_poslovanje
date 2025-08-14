@@ -6,6 +6,7 @@ use App\Models\WorkOrder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProformaExport;
+use Illuminate\Http\Request;
 
 /**
  * Controller responsible for handling operations related to work orders.
@@ -69,4 +70,82 @@ class WorkOrderController extends Controller
         // Generate and return the Excel file using a dedicated export class.
         return Excel::download(new ProformaExport($workOrder, $grouped), "Profaktura-{$workOrder->code}.xlsx");
     }
+
+    public function exportWeekPdf(\Illuminate\Http\Request $request)
+{
+    // week_start može doći iz linka; ako nije, koristi "danas"
+    $weekStart = \Illuminate\Support\Carbon::parse(
+        $request->get('week_start', now()->toDateString())
+    )->startOfWeek(\Illuminate\Support\Carbon::MONDAY)->startOfDay();
+
+    $weekEnd = (clone $weekStart)->endOfWeek(\Illuminate\Support\Carbon::SUNDAY)->endOfDay();
+
+    // Učitaj samo zakazane naloge za datu nedelju
+    $orders = \App\Models\WorkOrder::query()
+        ->select([
+            'id', 'code', 'customer_name', 'phone', 'email', 'address',
+            'status', 'scheduled_at', 'total_price', 'advance_payment', 'type',
+        ])
+        ->whereNotNull('scheduled_at')
+        ->whereBetween('scheduled_at', [$weekStart, $weekEnd])
+        ->orderBy('scheduled_at')
+        ->get();
+
+    // Grupisanje po datumu (Y-m-d)
+    $grouped = $orders->groupBy(function ($o) {
+        return \Illuminate\Support\Carbon::parse($o->scheduled_at)->toDateString();
+    });
+
+    // Za header i “prazne” dane
+    $days = collect(range(0, 6))->map(fn ($i) => (clone $weekStart)->addDays($i));
+
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('work-orders.week-pdf', [
+        'weekStart' => $weekStart,
+        'weekEnd'   => $weekEnd,
+        'days'      => $days,
+        'grouped'   => $grouped,
+    ])->setPaper('a4', 'portrait');
+
+    $fileName = 'Montaže-' . $weekStart->format('Ymd') . '-' . $weekEnd->format('Ymd') . '.pdf';
+    return $pdf->download($fileName);
+}
+
+
+public function exportProformaPdf(Request $request, \App\Models\WorkOrder $workOrder)
+{
+    // Učitaj relacije potrebne za izračun stavki
+    $workOrder->load([
+        'positions',
+        'positions.metraza.product.vendor',
+        'positions.garnisna.product.vendor',
+        'positions.roloZebra.product.vendor',
+        'positions.plise.product.vendor',
+    ]);
+
+    // ---- Opcije iz dijaloga ----
+    $racunKey = $request->get('racun', 'firma');            // 'firma' | 'dusan'
+    $pdvIncluded = (bool) $request->boolean('pdv_included'); // 1 => uračunat
+
+    // Brojevi računa:
+    $racuni = [
+        'firma' => '265-6240310000065-53',
+        'dusan' => '115-0000000066773-50',
+    ];
+    $accountNumber = $racuni[$racunKey] ?? $racuni['firma'];
+
+    // Grupisanje kao i za Excel (po nazivu pozicije)
+    $grouped = $workOrder->positions->groupBy(fn ($p) => $p->naziv ?: 'Bez naziva');
+
+    // Prosledi u view i opciju PDV-a + izabrani račun
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('work-orders.proforma-pdf', [
+        'workOrder'      => $workOrder,
+        'grouped'        => $grouped,
+        'pdvIncluded'    => $pdvIncluded,   // NOVO
+        'accountNumber'  => $accountNumber, // NOVO
+    ])->setPaper('a4', 'portrait');
+
+    return $pdf->download("Profaktura-{$workOrder->code}.pdf");
+}
+
+
 }
