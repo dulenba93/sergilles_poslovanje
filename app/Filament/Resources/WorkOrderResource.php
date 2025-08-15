@@ -356,7 +356,6 @@ class WorkOrderResource extends Resource
                                 TextInput::make('total_price')
                                     ->label('Ukupna cena')
                                     ->numeric()
-                                    ->readOnly(),
                             ]);
                         }
 

@@ -45,4 +45,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+        public function canAccessPanel(Panel $panel): bool
+    {
+        // Daj pristup svim korisnicima (ili ovde stavi svoju logiku npr. is_admin == 1)
+        return true;
+    }
+
 }

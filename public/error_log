@@ -1,0 +1,65 @@
+[15-Aug-2025 12:07:20 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:20 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:25 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:25 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:26 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:26 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:27 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:27 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:28 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:28 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:28 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:28 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:28 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:28 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:29 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:29 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:29 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:29 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:29 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:29 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:30 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:07:30 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:08:12 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:08:12 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:08:13 Europe/Belgrade] PHP Warning:  require(/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
+[15-Aug-2025 12:08:13 Europe/Belgrade] PHP Fatal error:  Uncaught Error: Failed opening required '/home/zavesesergilles/poslovanje.zavesesergilles.rs/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/zavesesergilles/poslovanje.zavesesergilles.rs/public/index.php on line 8
